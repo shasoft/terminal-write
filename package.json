@@ -1,0 +1,19 @@
+{
+  "name": "terminal-write",
+  "description": "Outputting colored text to the console",
+  "keywords": [
+    "console",
+    "color",
+    "print",
+    "output"
+  ],
+  "license": "MIT",
+  "author": "Shabanov Valera",
+  "dependencies": {},
+  "engines": {
+    "node": ">= 10.18.1",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  },
+  "version": "1.0.0"
+}
