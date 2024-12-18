@@ -14,13 +14,17 @@ terminal.removeTag('test')
 terminal.writeLn('<Test>removeTag</> <string>string</>');
 
 console.log();
+
 // Клонируем
 const terminalTest = terminal.clone();
+
 // Добавляем новый тег
 terminalTest.addTag('Test', '<fgRed><bgCyan>')
+
 // Выводим
 terminalTest.writeLn('<Test>terminalTest</>');
 terminal.writeLn('<Test>terminal</>');
+
 // Заменяем исходный терминал клонированным
 terminal.replace(terminalTest);
 terminal.writeLn('<Test>terminal after replace</>');
@@ -28,7 +32,7 @@ terminal.writeLn('<Test>terminal after replace</>');
 terminal.writeLn('<fgRed>zzz');
 terminal.writeLn('<FGRED>zzz');
 terminal.writeLn('<fgred>zzz');
-//*/
+
 // Вывести справку
 terminal.addTag('Test', '<Info>');
 terminal.addTag('Test2', '[<Info>X</Info>]');
