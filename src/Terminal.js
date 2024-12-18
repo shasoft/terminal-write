@@ -1,86 +1,12 @@
-const styles = require("./ansiStyles");
-const ansiRegex = require("./ansiRegex");
+global.s_dd = function (...args) {
+    console.log(...args); process.exit(1);
+}
+const { EOL } = require("os");
+const getCloseTagValue = require("./getCloseTagValue");
+const theme = require("./theme.json");
+const strip_tags = require("./strip_tags");
+const strip_ansi = require("./strip_ansi");
 const help = require("./help");
-// ПредНастроенные теги
-const tags = require("./tags");
-function strip_tags(s) {
-    return s.replace(/\<.+?\>/g, '');
-}
-// Получить значение закрывающего тега 
-function getCloseTagValue(str) {
-    if (strip_tags(str).length == 0) {
-        return '<' + str
-            .split('<')
-            .slice(1)
-            .reverse()
-            .map((line) => {
-                return '/' + line;
-            })
-            .join('<')
-            ;
-    }
-    return null;
-}
-const tagsClose = {};
-for (var name in tags) {
-    const closeTag = getCloseTagValue(tags[name]);
-    if (closeTag) {
-        tagsClose['/' + name] = closeTag;
-    }
-}
-for (var name in tagsClose) {
-    tags[name] = tagsClose[name];
-}
-//console.log(tagsClose); process.exit(1);
-//
-const colorTags = {};
-for (const name of styles._names.color) {
-    colorTags[name.toLowerCase()] = 1;
-}
-//
-const shortName = {
-    bold: 'b',
-    italic: 'i',
-    underline: 'u',
-    strikethrough: 's'
-};
-//
-const modifierTags = {};
-for (var name of styles._names.modifier) {
-    name = name.toLowerCase()
-    modifierTags[name] = 1;
-    if (shortName[name]) {
-        modifierTags[shortName[name]] = 1;
-    }
-}
-//console.log(styles); process.exit(1);
-// Добавить теги
-for (var name in styles) {
-    if (!name.startsWith('_')) {
-        const item = styles[name];
-        name = name.charAt(0).toUpperCase() + name.slice(1)
-        //
-        var nameShort = shortName[name.toLowerCase()] ? shortName[name.toLowerCase()] : null;
-        //
-        if (colorTags[name.toLowerCase()]) {
-            name = 'Fg' + name;
-        }
-        //
-        tags[name] = item.open;
-        if (nameShort) {
-            tags[nameShort] = item.open;
-        }
-        if (item.open != item.close) {
-            tags['/' + name] = item.close;
-            if (nameShort) {
-                tags['/' + nameShort] = item.close;
-            }
-        }
-    }
-}
-// </>
-tags["/"] = '<Reset>';
-//console.log(tags); process.exit(1);
 //
 class Terminal {
     m_rules = [];
@@ -88,9 +14,9 @@ class Terminal {
         if (source) {
             this.m_rules = [].concat(source.m_rules);
         } else {
-            for (const tag in tags) {
+            for (const name in theme) {
                 this.m_rules.push(
-                    this.#createRule(tag, tags[tag])
+                    this.#createRule(name, theme[name])
                 );
             }
         }
@@ -98,17 +24,17 @@ class Terminal {
 
     #createRule(name, value) {
         return {
-            tag: name,
-            name: name.toLowerCase(),
+            name: name,
+            tag: name.toLowerCase(),
             re: new RegExp('<' + name + '>', "gmi"),
             value: value
         };
     }
 
     #findTag(name) {
-        name = name.toLowerCase();
+        const tag = name.toLowerCase();
         for (var i in this.m_rules) {
-            if (this.m_rules[i].name == name) {
+            if (this.m_rules[i].tag == tag) {
                 return i;
             }
         }
@@ -133,18 +59,32 @@ class Terminal {
     }
 
     strip_ansi(...args) {
-        return args.join(' ').replace(ansiRegex(), '');
+        return strip_ansi(args.join(' '));
+    }
+
+    clear() {
+        // clear console
+        process.stdout.write('\x1Bc')
+        return this;
     }
 
     write(...args) {
-        console.log(this.parse(...args) + tags.Reset);
+        if (args.length) {
+            process.stdout.write(this.parse(...args) + theme.Reset);
+        }
+        return this;
+    }
+
+    writeLn(...args) {
+        this.write(...args);
+        process.stdout.write(EOL);
         return this;
     }
 
     hr(color, ch, length) {
         ch = ch || '*';
         length = length || 80;
-        return this.write(color + ch.repeat(length) + '</>');
+        return this.writeLn(color + ch.repeat(length));
     }
 
     clone() {
@@ -155,7 +95,7 @@ class Terminal {
         this.m_rules = [].concat(source.m_rules);
     }
 
-    setTag(name, value) {
+    addTag(name, value) {
         const rule = this.#createRule(name, value);
         const index = this.#findTag(name);
         if (index < 0) {
@@ -192,7 +132,17 @@ class Terminal {
         return this;
     }
 
+    allTags() {
+        const ret = {};
+        for (var i in this.m_rules) {
+            const rule = this.m_rules[i];
+            ret[rule.name] = rule.value;
+        }
+        return ret;
+    }
     tags() {
+        console.log('.tags()');
+        process.exit(1);
         var ret = {
             colors: {},
             bgColors: {},

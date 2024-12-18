@@ -10,6 +10,9 @@
   "license": "MIT",
   "author": "Shabanov Valera",
   "dependencies": {},
+  "devDependencies": {
+    "shasoft-fs": "*"
+  },
   "engines": {
     "node": ">= 10.18.1",
     "npm": ">= 6.13.4",

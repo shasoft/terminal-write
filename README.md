@@ -7,7 +7,7 @@ const terminal = require("terminal-write");
 
 const text = '<FgBlue>terminal</FgBlue><Success>-</><BgBlue>write</>';
 terminal.hr('<Title>', '#', terminal.strip_tags(text).length);
-terminal.write(text);
+terminal.writeLn(text);
 terminal.hr('<Warning>', '@', terminal.strip_ansi(terminal.parse(text)).length);
 ```
 ![](example/example.png)
@@ -15,9 +15,9 @@ terminal.hr('<Warning>', '@', terminal.strip_ansi(terminal.parse(text)).length);
 Теги могут содержать закрывающий тег который заканчивает действие открывающего тега. Тег `</>` / `<Reset>` позволяет закончить действие всех тегов. Теги регистронезависимы. 
 ```js
 // Код ниже выведет одно и тоже
-terminal.write('<fgRed>zzz');
-terminal.write('<FGRED>zzz');
-terminal.write('<fgred>zzz');
+terminal.writeLn('<fgRed>zzz');
+terminal.writeLn('<FGRED>zzz');
+terminal.writeLn('<fgred>zzz');
 ```
 ![](example/ignoreCase.png)
 
@@ -36,25 +36,25 @@ terminal.write('<fgred>zzz');
 
 ### Добавление своих настроек
 ```js
-// Добавляем новый тег
-terminal.setTag('Test', '<fgRed><bgCyan>')
-terminal.write('<Test>Test</> <string>string</>');
+// Добавляем новый тег (заменяем существующий)
+terminal.addTag('Test', '<fgRed><bgCyan>')
+terminal.writeLn('<Test>Test</> <string>string</>');
 // Удаляем тег
 terminal.removeTag('test')
-terminal.write('<Test>Test</> <string>string</>');
+terminal.writeLn('<Test>Test</> <string>string</>');
 ```
-![](example/setRemoveTag.png)
+![](example/addRemoveTag.png)
 
 ```js
 // Клонируем
 const terminalTest = terminal.clone();
 // Добавляем новый тег
-terminalTest.setTag('Test', '<fgRed><bgCyan>')
+terminalTest.addTag('Test', '<fgRed><bgCyan>')
 // Выводим
 terminalTest.write('<Test>terminalTest</>');
-terminal.write('<Test>terminal</>');
+terminal.writeLn('<Test>terminal</>');
 // Заменяем исходный терминал клонированным
 terminal.replace(terminalTest);
-terminal.write('<Test>terminal after replace</>');
+terminal.writeLn('<Test>terminal after replace</>');
 ```
 ![](example/clone.png)

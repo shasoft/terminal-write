@@ -9,4 +9,8 @@ function ansiRegex({ onlyFirst = false } = {}) {
 
     return new RegExp(pattern, onlyFirst ? undefined : 'g');
 }
-module.exports = ansiRegex
+const re = ansiRegex();
+function strip_ansi(text) {
+    return text.replace(re, '');
+}
+module.exports = strip_ansi
