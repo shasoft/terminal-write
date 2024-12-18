@@ -116,14 +116,6 @@ class Terminal {
         return this;
     }
 
-    getTag(name) {
-        const index = this.#findTag(name);
-        if (index >= 0) {
-            return this.m_rules[index].value;
-        }
-        return null;
-    }
-
     removeTag(name) {
         const index = this.#findTag(name);
         if (index >= 0) {
