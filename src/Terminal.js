@@ -140,45 +140,6 @@ class Terminal {
         }
         return ret;
     }
-    tags() {
-        console.log('.tags()');
-        process.exit(1);
-        var ret = {
-            colors: {},
-            bgColors: {},
-            modifier: {},
-            theme: {}
-        };
-        const closeTags = {};
-        for (var rule of this.m_rules) {
-            if (rule.tag.startsWith('/')) {
-                closeTags[rule.tag.substring(1, rule.tag.length)] = 1;
-            }
-        }
-        for (var rule of this.m_rules) {
-            if (!rule.tag.startsWith('/')) {
-                var obj = null;
-                if (rule.tag.startsWith('Fg')) {
-                    obj = ret.colors;
-                }
-                else if (rule.tag.startsWith('Bg')) {
-                    obj = ret.bgColors;
-                }
-                else if (modifierTags[rule.name]) {
-                    obj = ret.modifier;
-                } else {
-                    obj = ret.theme;
-                }
-                if (obj) {
-                    obj[rule.tag] = {
-                        close: !!closeTags[rule.tag],
-                        value: rule.value
-                    };
-                }
-            }
-        }
-        return ret;
-    }
 
     help() {
         help(this);
