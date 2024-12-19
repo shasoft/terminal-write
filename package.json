@@ -11,7 +11,7 @@
   "author": "Shabanov Valera",
   "dependencies": {},
   "devDependencies": {
-    "shasoft-fs": "*"
+    "ansi-styles": "*"
   },
   "engines": {
     "node": ">= 10.18.1",

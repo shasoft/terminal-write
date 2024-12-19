@@ -1,11 +1,11 @@
 // https://sky.pro/wiki/javascript/sravnenie-process-stdout-write-i-console-log-v-node-js/
-// Стили из 
-const { fileJsonSave } = require("shasoft-fs");
-const styles = require("./ansiStyles");
+const fs = require("fs");
+const path = require("path");
 const _each = require("./_each");
 const _ucfirst = require("./_ucfirst");
 const theme = require("./theme");
 const getCloseTagValue = require("./getCloseTagValue");
+const styles = require("./ansiStyles");
 
 // Короткие имена для тегов
 const shortName = {
@@ -55,5 +55,19 @@ _each(styles.modifierNames, (name) => {
     _addTag(name, tag);
 });
 tags["/"] = '<Reset>';
-//
-fileJsonSave(__dirname + '/theme.json', tags);
+// Вывести цветной
+function printText(text, color) {
+    console.log(tags[color] + text + tags['/' + color]);
+}
+// Сохранить
+const content = JSON.stringify(tags, null, 2);
+const filepathTheme = path.resolve(__dirname, 'theme.json');
+if (!fs.existsSync(filepathTheme) || fs.readFileSync(filepathTheme) != content) {
+    printText('Цветовая схема сохранена', 'FgGreen');
+    fs.writeFileSync(
+        filepathTheme,
+        content
+    );
+} else {
+    printText('Цветовая схема не изменилась', 'FgYellow');
+}
